@@ -30,11 +30,11 @@ class LocationServicesDialogBoxModule extends ReactContextBaseJavaModule impleme
     }
 
     @ReactMethod
-    public void checkLocationServicesIsEnabled(ReadableMap configMap, Promise promise) {
+    public void checkLocationServicesIsEnabled(ReadableMap configMap, Boolean activityResult, Promise promise) {
         promiseCallback = promise;
         map = configMap;
         currentActivity = getCurrentActivity();
-        checkLocationService(false);
+        checkLocationService(activityResult);
     }
 
     private void checkLocationService(Boolean activityResult) {
@@ -44,7 +44,7 @@ class LocationServicesDialogBoxModule extends ReactContextBaseJavaModule impleme
 
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             if (activityResult) {
-                promiseCallback.reject(new Throwable("disabled"));
+                promiseCallback.resolve("disabled");
             } else {
                 displayPromptForEnablingGPS(currentActivity, map, promiseCallback);
             }
@@ -68,7 +68,7 @@ class LocationServicesDialogBoxModule extends ReactContextBaseJavaModule impleme
                 .setNegativeButton(configMap.getString("cancel"),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int id) {
-                                promise.reject(new Throwable("disabled"));
+                                promise.resolve("disabled");
                                 dialogInterface.cancel();
                             }
                         });
@@ -83,3 +83,4 @@ class LocationServicesDialogBoxModule extends ReactContextBaseJavaModule impleme
         }
     }
 }
+
